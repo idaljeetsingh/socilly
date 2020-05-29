@@ -1,19 +1,21 @@
 <mat-card>
-  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
-    <mat-card-title>New Post</mat-card-title>
-    <mat-card-subtitle>Create a new post by filling out below fields!</mat-card-subtitle>
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form (submit)="onSavePost(postForm)" #postForm="ngForm" *ngIf="!isLoading">
+<!--    <mat-card-title>New Post</mat-card-title>-->
+<!--    <mat-card-subtitle>Create a new post by filling out below fields!</mat-card-subtitle>-->
     <mat-form-field>
       <label>
-        <input matInput
-               placeholder="Post Title"
-               type="text"
-               name="title"
-               [ngModel]="title"
-               required
+        <input
+          matInput
+          placeholder="Post Title"
+          type="text"
+          name="title"
+          [ngModel]=post?.title
+          required
+          #title="ngModel">
 
-        >
-<!--        TO show error i.e validation-->
-        <mat-error *ngIf="title.length >= 1 && title.length <= 3 ">Minimum title of length 3 is required</mat-error>
+        <!--        TO show error i.e validation-->
+        <mat-error *ngIf="title.invalid">Title is required</mat-error>
       </label>
     </mat-form-field>
     <mat-form-field>
@@ -22,13 +24,13 @@
           placeholder="Post content"
           matInput rows="4"
           name="content"
-          [ngModel]="content"
+          [ngModel]=post?.content
           required
           maxlength="500"
-
+          #content="ngModel"
         ></textarea>
-<!--        TO show error i.e validation-->
-        <mat-error *ngIf="content.length == 500">Maximum character limit of 500 reached</mat-error>
+        <!--        TO show error i.e validation-->
+        <mat-error *ngIf="content.invalid">Maximum character limit of 500 reached</mat-error>
       </label>
     </mat-form-field>
     <button
