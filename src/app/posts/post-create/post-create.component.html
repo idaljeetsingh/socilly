@@ -1,0 +1,40 @@
+<mat-card>
+  <form (submit)="onAddPost(postForm)" #postForm="ngForm">
+    <mat-card-title>New Post</mat-card-title>
+    <mat-card-subtitle>Create a new post by filling out below fields!</mat-card-subtitle>
+    <mat-form-field>
+      <label>
+        <input matInput
+               placeholder="Post Title"
+               type="text"
+               name="title"
+               [ngModel]="title"
+               required
+
+        >
+<!--        TO show error i.e validation-->
+        <mat-error *ngIf="title.length >= 1 && title.length <= 3 ">Minimum title of length 3 is required</mat-error>
+      </label>
+    </mat-form-field>
+    <mat-form-field>
+      <label>
+        <textarea
+          placeholder="Post content"
+          matInput rows="4"
+          name="content"
+          [ngModel]="content"
+          required
+          maxlength="500"
+
+        ></textarea>
+<!--        TO show error i.e validation-->
+        <mat-error *ngIf="content.length == 500">Maximum character limit of 500 reached</mat-error>
+      </label>
+    </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit">Save Post
+    </button>
+  </form>
+</mat-card>
