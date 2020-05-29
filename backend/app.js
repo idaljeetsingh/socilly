@@ -20,7 +20,7 @@ app.use((req, res, next) => {
   next();
 })
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 
 
 //APP Endpoints
@@ -30,7 +30,7 @@ app.post("/api/posts", (req, res, next) => {
     content: req.body.content
   });
   post.save();
-  console.log(req.body);
+  // console.log(req.body);
   res.status(201).json({
     message: "Post Added Successfully..",
     data: post
