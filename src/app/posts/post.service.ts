@@ -6,6 +6,7 @@ import {map} from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 import {log} from 'util';
 import {Router} from '@angular/router';
+import {Form} from '@angular/forms';
 
 
 @Injectable({providedIn: 'root'})
@@ -26,7 +27,8 @@ export class PostService {
           return {
             title: post.title,
             content: post.content,
-            id: post._id
+            id: post._id,
+            imagePath: post.imagePath
           };
         });
       }))
@@ -40,14 +42,21 @@ export class PostService {
     return this.postsUpdated.asObservable();
   }
 
-  addPost(title: string, content: string) {
-    const post: Post = {id: null, title, content};
+  addPost(title: string, content: string, image: File) {
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, title);
     this.http
-      .post<{ message: string, data: { _id: string, title: string, content: string } }>(`${this.API_BASE_URL}/posts`, post)
+      .post<{ message: string, data: { _id: string, title: string, content: string, imagePath: string } }>(
+        `${this.API_BASE_URL}/posts`,
+        postData
+      )
       .subscribe((responseData) => {
+        // @ts-ignore
+        const post: Post = {id: responseData.data._id, title, content, imagePath: responseData.data.imagePath};
         console.log(responseData.message);
         console.log(responseData.data);
-        post.id = responseData.data._id;
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
@@ -64,13 +73,22 @@ export class PostService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string, title: string, content: string }>(`${this.API_BASE_URL}/posts/${id}`);
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(`${this.API_BASE_URL}/posts/${id}`);
   }
 
-  updatePost(id: string, title: string, content: string) {
-    const post: Post = {id, title, content};
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: Post | FormData;
+    if (typeof (image) === 'object') {
+      postData = new FormData();
+      postData.append('id', id);
+      postData.append('title', title);
+      postData.append('content', content);
+      postData.append('image', image, title);
+    } else {
+      postData = {id, title, content, imagePath: image};
+    }
     this.http
-      .put(`${this.API_BASE_URL}/posts/${id}`, post)
+      .put(`${this.API_BASE_URL}/posts/${id}`, postData)
       .subscribe(response => this.router.navigate(['/']));
   }
 }

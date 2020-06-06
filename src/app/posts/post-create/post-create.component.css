@@ -11,3 +11,19 @@ textarea {
 mat-spinner {
   margin: auto;
 }
+
+input[type="file"] {
+  visibility: hidden;
+}
+.image-preview{
+  height: 100px;
+  margin: 20px 0;
+}
+
+.image-preview img {
+  height: 100%;
+}
+
+.spacer {
+  float: right;
+}

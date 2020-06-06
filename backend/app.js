@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const app = express();
 const postsRoutes = require('./routes/posts')
@@ -11,6 +12,9 @@ app.use((req, res, next) => {
 })
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+// Allowing static access to images
+app.use('/images', express.static(path.join('backend/images')));
 
 //Routes
 app.use("/api/posts", postsRoutes)
