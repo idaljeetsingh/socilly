@@ -12,29 +12,37 @@ import {Form} from '@angular/forms';
 @Injectable({providedIn: 'root'})
 export class PostService {
   private posts: Post[] = [];
-  private postsUpdated = new Subject<Post[]>();
+  private postsUpdated = new Subject<{ posts: Post[], postCount: number }>();
   private API_BASE_URL = environment.API_BASE_URL;
 
   constructor(private http: HttpClient, private router: Router) {
   }
 
-  getPosts() {
-    // console.log();
+  getPosts(postsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${postsPerPage}&pagenum=${currentPage}`;
     this.http
-      .get<{ message: string, posts: any }>(`${this.API_BASE_URL}/posts`)
-      .pipe(map((postData) => {
-        return postData.posts.map(post => {
+      .get<{ message: string, posts: any, maxPosts: number }>(`${this.API_BASE_URL}/posts${queryParams}`)
+      .pipe(
+        map(postData => {
           return {
-            title: post.title,
-            content: post.content,
-            id: post._id,
-            imagePath: post.imagePath
+            posts: postData.posts.map(post => {
+              return {
+                title: post.title,
+                content: post.content,
+                id: post._id,
+                imagePath: post.imagePath
+              };
+            }),
+            maxPost: postData.maxPosts
           };
+        })
+      )
+      .subscribe((transformedPostsData) => {
+        this.posts = transformedPostsData.posts;
+        this.postsUpdated.next({
+          posts: [...this.posts],
+          postCount: transformedPostsData.maxPost
         });
-      }))
-      .subscribe((transformedPosts) => {
-        this.posts = transformedPosts;
-        this.postsUpdated.next([...this.posts]);
       });
   }
 
@@ -52,24 +60,20 @@ export class PostService {
         `${this.API_BASE_URL}/posts`,
         postData
       )
-      .subscribe((responseData) => {
-        // @ts-ignore
-        const post: Post = {id: responseData.data._id, title, content, imagePath: responseData.data.imagePath};
-        console.log(responseData.message);
-        console.log(responseData.data);
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
+      .subscribe(responseData => {
+        // // @ts-ignore
+        // const post: Post = {id: responseData.data._id, title, content, imagePath: responseData.data.imagePath};
+        // console.log(responseData.message);
+        // console.log(responseData.data);
+        // this.posts.push(post);
+        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
 
   deletePost(postId: string) {
-    this.http
-      .delete(`${this.API_BASE_URL}/posts/${postId}`)
-      .subscribe(() => {
-        this.posts = this.posts.filter(post => post.id !== postId);
-        this.postsUpdated.next([...this.posts]);
-      });
+    return this.http
+      .delete(`${this.API_BASE_URL}/posts/${postId}`);
   }
 
   getPost(id: string) {

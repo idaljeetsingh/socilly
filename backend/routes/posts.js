@@ -54,14 +54,27 @@ router.post("", multer({storage: storage}).single('image'), (req, res, next) => 
 });
 
 router.get('', (req, res, next) => {
-  Post.find()
+  console.log(req.query);
+  const pageSize = +req.query.pagesize;
+  const currentPage = +req.query.pagenum;
+  const postQuery = Post.find();
+  let fetchedPosts;
+  if (pageSize && currentPage) {
+    postQuery
+      .skip(pageSize * (currentPage - 1))
+      .limit(pageSize);
+  }
+  postQuery
     .then(docs => {
-      // console.log(docs)
-      res.status(200).json({
-        message: 'Posts fetched successfully',
-        posts: docs
-      });
+      fetchedPosts = docs
+      return Post.count();
+    }).then(count => {
+    res.status(200).json({
+      message: 'Posts fetched successfully',
+      posts: fetchedPosts,
+      maxPosts: count
     });
+  });
 
 });
 
