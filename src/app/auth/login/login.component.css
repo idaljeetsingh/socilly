@@ -1,0 +1,31 @@
+mat-form-field {
+  width: 100%;
+}
+
+mat-spinner {
+  margin: auto;
+}
+
+.login-card {
+  max-width: 500px;
+  margin-top: 20px;
+}
+
+.card-label {
+  font-size: xx-large;
+  font-weight: normal;
+  display: flex;
+}
+
+.login-div {
+  margin-top: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.mat-icon {
+  vertical-align: middle;
+  margin-right: 5px;
+}

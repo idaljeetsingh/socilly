@@ -12,21 +12,23 @@
           type="text"
           formControlName="title"
         >
-
-        <!--        TO show error i.e validation-->
-        <mat-error *ngIf="form.get('title').invalid">Title with min length 3 is required</mat-error>
       </label>
+      <!--        TO show error i.e validation-->
+      <mat-error *ngIf="form.get('title').invalid && form.dirty">Title with min length 3 is required</mat-error>
     </mat-form-field>
     <mat-form-field>
+      <mat-hint>Maximum 500 characters allowed.</mat-hint>
       <label>
         <textarea
           placeholder="Post content"
           matInput rows="4"
+          minlength="10"
+          maxlength="500"
           formControlName="content"
         ></textarea>
-        <!--        TO show error i.e validation-->
-        <mat-error *ngIf="form.get('content').invalid">Maximum character limit of 500 reached</mat-error>
       </label>
+      <!--        TO show error i.e validation-->
+      <mat-error *ngIf="form.get('content').invalid">Minimum 10 characters are required</mat-error>
     </mat-form-field>
     <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
       <img [src]="imagePreview" [alt]="form.value.title">
@@ -34,7 +36,7 @@
     <div>
       <button mat-stroked-button type="button" (click)="filePicker.click()">Add Image</button>
       <input type="file" #filePicker (change)="onImagePicked($event)">
-<!--      <span class="spacer"></span>-->
+      <!--      <span class="spacer"></span>-->
       <button
         mat-raised-button
         color="primary"

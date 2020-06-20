@@ -1,8 +1,7 @@
 const express = require('express');
 const multer = require('multer');
-const mongoose = require('mongoose');
 const Post = require('../models/post.js');
-const secrets = require('../proj_secrets');
+const checkAuth = require("../middleware/check-auth")
 
 const router = express.Router();
 
@@ -28,17 +27,8 @@ const storage = multer.diskStorage({
   }
 });
 
-mongoose.connect(secrets.MONGO_URI, {useNewUrlParser: true, useUnifiedTopology: true})
-  .then(() => {
-    console.log('Connected to DB');
-  })
-  .catch(() => {
-    console.log('Connection Failed!');
-  })
-
-
 //APP Endpoints
-router.post("", multer({storage: storage}).single('image'), (req, res, next) => {
+router.post("", checkAuth, multer({storage: storage}).single('image'), (req, res, next) => {
   const url = req.protocol + '://' + req.get('host');
   const post = new Post({
     title: req.body.title,
@@ -54,7 +44,7 @@ router.post("", multer({storage: storage}).single('image'), (req, res, next) => 
 });
 
 router.get('', (req, res, next) => {
-  console.log(req.query);
+  // console.log(req.query);
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.pagenum;
   const postQuery = Post.find();
@@ -78,7 +68,18 @@ router.get('', (req, res, next) => {
 
 });
 
-router.delete('/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
+  Post.findById(req.params.id)
+    .then(post => {
+      if (post) {
+        res.status(200).json(post);
+      } else {
+        res.status(404).json({message: "Post not found"});
+      }
+    })
+});
+
+router.delete('/:id', checkAuth, (req, res, next) => {
   // console.log(req.params.id);
   Post.deleteOne({_id: req.params.id})
     .then(result => {
@@ -88,8 +89,9 @@ router.delete('/:id', (req, res, next) => {
       });
     })
 
-})
-router.put('/:id', multer({storage: storage}).single('image'), (req, res, next) => {
+});
+
+router.put('/:id', checkAuth, multer({storage: storage}).single('image'), (req, res, next) => {
   let imagePath = req.body.imagePreview;
   if (req.file) {
     const url = req.protocol + '://' + req.get('host');
@@ -106,17 +108,7 @@ router.put('/:id', multer({storage: storage}).single('image'), (req, res, next) 
       // console.log(result)
       res.status(200).json({message: "Update Successfull.."})
     })
-})
+});
 
-router.get('/:id', (req, res, next) => {
-  Post.findById(req.params.id)
-    .then(post => {
-      if (post) {
-        res.status(200).json(post);
-      } else {
-        res.status(404).json({message: "Post not found"});
-      }
-    })
-})
 
 module.exports = router;
