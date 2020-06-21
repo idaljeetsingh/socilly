@@ -1,4 +1,11 @@
-# Angular Demo
+# Socilly
+Socilly is a website I am developing while learning Angular.
+<h3> See the website in action @ <a href="https://socilly.web.app">https://socilly.web.app/ </a> </h3>
+
+
+
+
+# Preconfigured ReadMe from ANGULAR-CLI
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.5.
 
