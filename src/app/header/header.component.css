@@ -13,3 +13,8 @@ a {
 .spacer {
   flex: 1 1 auto;
 }
+.header-userName {
+  font-size: medium;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  user-select: none;
+}

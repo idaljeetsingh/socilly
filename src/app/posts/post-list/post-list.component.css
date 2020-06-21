@@ -20,7 +20,7 @@ mat-paginator {
 }
 
 .post-image img {
-  max-width: 40%;
-  max-height: 40%;
+  max-width: 30%;
+  max-height: 30%;
   box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 }

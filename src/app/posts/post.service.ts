@@ -30,7 +30,8 @@ export class PostService {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               };
             }),
             maxPost: postData.maxPosts
@@ -61,12 +62,6 @@ export class PostService {
         postData
       )
       .subscribe(responseData => {
-        // // @ts-ignore
-        // const post: Post = {id: responseData.data._id, title, content, imagePath: responseData.data.imagePath};
-        // console.log(responseData.message);
-        // console.log(responseData.data);
-        // this.posts.push(post);
-        // this.postsUpdated.next([...this.posts]);
         this.router.navigate(['/']);
       });
   }
@@ -77,7 +72,7 @@ export class PostService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string, title: string, content: string, imagePath: string }>(`${this.API_BASE_URL}/posts/${id}`);
+    return this.http.get<{ _id: string, title: string, content: string, imagePath: string , creator: string}>(`${this.API_BASE_URL}/posts/${id}`);
   }
 
   updatePost(id: string, title: string, content: string, image: File | string) {
@@ -89,7 +84,7 @@ export class PostService {
       postData.append('content', content);
       postData.append('image', image, title);
     } else {
-      postData = {id, title, content, imagePath: image};
+      postData = {id, title, content, imagePath: image, creator: null};
     }
     this.http
       .put(`${this.API_BASE_URL}/posts/${id}`, postData)
